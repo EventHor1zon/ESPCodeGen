@@ -112,7 +112,7 @@ def create_register():
     p = Panel(out)
     refresh_screen(p)
 
-    _r = register_template.substitute({"contents": contents_master, "address": address, "reg_name": regname, "def": _def})
+    _r = register_template.substitute({"contents": contents_master, "reg_name": regname})
 
     rprint("Done! Press any key to return")
     h = Prompt.ask("")
@@ -193,20 +193,18 @@ def create_functions_from_reg():
         get = esp_get_template.substitute({
             "drivername": drivername,
             "handlename": handlename,
-            "functype": "get",
             "param": x['name'],
-            "vartype": "uint8_t" ,
-            "limit": 2**x["width"],
-            "shift": x['shift']
+            "vartype": ("uint8_t" if x['width'] > 1 else "bool"),
         })
 
         set = esp_set_template.substitute({
             "drivername": drivername,
             "handlename": handlename,
-            "functype": "set",
             "param": x['name'],
-            "vartype": "uint8_t" ,
-        })
+            "vartype": ("uint8_t" if x['width'] > 1 else "bool"),
+            "limit": (2**x["width"])-1,
+            "shift": x['shift']
+            })
 
         funcs.append(get)
         funcs.append(set)

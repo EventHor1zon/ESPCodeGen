@@ -18,8 +18,8 @@ struct {
             $contents
         } regbits;
     } value;
-    uint8_t address = $address;
-    uint8_t default = $def;
+    uint8_t address;
+    uint8_t default;
 } $reg_name; 
 """
 
@@ -27,7 +27,17 @@ register_template = Template(register_string)
 
 
 esp_get_string = """
-esp_err_t ${drivername}_${functype}_${param}($handlename dev, $vartype *var) {
+esp_err_t ${drivername}_get_${param}($handlename dev, $vartype *var) {
+    esp_err_t err = ESP_OK;
+    *var = $handlename->$param;
+    return err;
+}
+"""
+
+esp_get_template = Template(esp_get_string)
+
+esp_set_string = """
+esp_err_t ${drivername}_set_${param}($handlename dev, $vartype *var) {
     esp_err_t err = ESP_OK;
     $vartype v = *var;
 
@@ -39,16 +49,6 @@ esp_err_t ${drivername}_${functype}_${param}($handlename dev, $vartype *var) {
         v = (v << ${shift});
 
     }
-    return err;
-}
-"""
-
-esp_get_template = Template(esp_get_string)
-
-esp_set_string = """
-esp_err_t ${drivername}_${functype}_${param}($handlename dev, $vartype *var) {
-    esp_err_t err = ESP_OK;
-    *var = $handlename->$param;
     return err;
 }
 """
